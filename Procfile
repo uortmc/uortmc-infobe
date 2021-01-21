@@ -1,0 +1,1 @@
+web: gunicorn -w 2 -b 0.0.0.0:${PORT} --chdir ./infobackend infobackend.wsgi --reload --timeout 900
