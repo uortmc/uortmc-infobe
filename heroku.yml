@@ -3,4 +3,4 @@ build:
   docker:
     web: Dockerfile
 run:
-  web: python ./infobackend/manage.py runserver 0.0.0.0:$PORT
+  web: gunicorn -w 2 -b 0.0.0.0:${PORT} --chdir ./infobackend infobackend.wsgi --reload --timeout 900
