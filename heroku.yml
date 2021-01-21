@@ -3,4 +3,4 @@ build:
   docker:
     web: Dockerfile
 run:
-  web: python infobackend/manage.py runserver 0.0.0.0:$PORT --noreload | grep "error"
+  web: python ./infobackend/manage.py runserver 0.0.0.0:$PORT
