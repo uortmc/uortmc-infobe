@@ -10,7 +10,7 @@ def login(req:HttpRequest):
     password=req.POST['password']
     user=authenticate(req,username=username,password=password)
     if(user is not None):
-        login(req,user)
+        login(user,request=req)
         return HttpResponse("Hello "+username)
     else:
         return HttpResponse("Invalid Credentials")
