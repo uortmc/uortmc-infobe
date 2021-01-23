@@ -1,5 +1,7 @@
 FROM python:3
 ENV PYTHONUNBUFFERED=1
+ENV PORT=8000
+EXPOSE 8000
 WORKDIR /code
 COPY requirements.txt /code/
 RUN pip install -r requirements.txt
