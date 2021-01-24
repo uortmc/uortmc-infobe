@@ -1,6 +1,7 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from .controllers.auth import SystemAuth
 
-def index(req):
-    return HttpResponse("Hello World")
-# Create your views here.
+
+
+def auth_login(req):
+    return SystemAuth.auth_login(req)
