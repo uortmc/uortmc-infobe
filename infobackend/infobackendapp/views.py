@@ -1,16 +1,7 @@
 from django.shortcuts import render
-from django.http import HttpResponse,HttpRequest
-from django.contrib.auth import authenticate, login
-def index(req:HttpRequest):
-    return HttpResponse("Index")
-# Create your views here.
+from .controllers.auth import SystemAuth
 
-def login(req:HttpRequest):
-    username=req.POST['username']
-    password=req.POST['password']
-    user=authenticate(req,username=username,password=password)
-    if(user is not None):
-        login(user,request=req)
-        return HttpResponse("Hello "+username)
-    else:
-        return HttpResponse("Invalid Credentials")
+
+
+def auth_login(req):
+    return SystemAuth.auth_login(req)
