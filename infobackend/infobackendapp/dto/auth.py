@@ -1,47 +1,35 @@
 
 from ..etc.dict_util import DictUtils as util
-class SystemAuthDTO:
-    @staticmethod
-    def status(status:bool)->dict:
-        return {"status":status}
-    @staticmethod
-    def loginAction(status:bool)->dict:
-        return util.merge(
-                SystemAuthDTO.status(status),
-                {"action": "LoginAction"})
-    @staticmethod
-    def loginSuccess()->dict:
-        return SystemAuthDTO.loginAction(True)
+from .abstract import AbstractDTO
+class SystemAuthDTO(AbstractDTO):
+    def __init__(self):
+        super(SystemAuthDTO, self).__init__("SystemAuth")
+    
+    def loginSuccess(self)->dict:
+        return SystemAuthDTO.success(self)
 
-    @staticmethod
-    def loginFailed(reason: str) -> dict:
+    
+    def loginFailed(self,reason: str) -> dict:
         return util.merge(
-                SystemAuthDTO.loginAction(False),
+                SystemAuthDTO.fail(self),
                 {"reason": reason})
 
-    @staticmethod
-    def loginFailedWithException(exception: Exception) -> dict:
-        return util.merge(
-                SystemAuthDTO.loginAction(False),
-                {"reason": str(exception)})
+    
+    def invalidCredentials(self) -> dict:
+        return SystemAuthDTO.loginFailed(self,"Invalid Credentials")
 
-    @staticmethod
-    def signUpAction(status: bool) -> dict:
-        return util.merge(
-                SystemAuthDTO.status(status),
-                {"action": "SignUpAction"})
-    @staticmethod
-    def signupSuccess() -> dict:
-        return SystemAuthDTO.signUpAction(True)
+    
+    def alreadyExists(self) -> dict:
+        return SystemAuthDTO.loginFailed(self,"User already exists")
 
-    @staticmethod
-    def signUpFailed(reason: str) -> dict:
+
+
+    def signupSuccess(self) -> dict:
+        return SystemAuthDTO.success(self)
+
+    
+    def signUpFailed(self,reason: str) -> dict:
         return util.merge(
-                SystemAuthDTO.signUpAction(False),
+                SystemAuthDTO.fail(self),
                 {"reason": reason})
 
-    @staticmethod
-    def signUpFailedWithException(exception: Exception) -> dict:
-        return util.merge(
-                SystemAuthDTO.signUpAction(False),
-                {"reason": str(exception)})

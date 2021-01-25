@@ -1,0 +1,71 @@
+from django.db import IntegrityError
+from django.http import JsonResponse,HttpRequest,HttpResponse
+from django.contrib.auth import authenticate, login
+from django.utils.datastructures import MultiValueDictKeyError
+
+from django.contrib.auth.models import User
+from ...dto.auth import SystemAuthDTO
+import logging
+
+from ...exceptions.auth import FieldsMissingException
+from ...logging.levels import LogLevel
+from ...logging.logging import LoggingLayer
+from ...models import Doctor
+from ...etc.authenticated_util import authenticated
+
+class SystemAuth:
+    logger=logging.getLogger("Class:SystemAuth")
+    loggingLayer=LoggingLayer(logger).log
+    dtos=SystemAuthDTO()
+    @staticmethod
+    def auth_login(req:HttpRequest):
+        try:
+            username,password=SystemAuth.getLoginCredentials(req)
+            user = authenticate(req, username=username, password=password)
+            if not authenticated(req):
+                if (user is not None):
+                    login(user=user, request=req)
+                    return JsonResponse(SystemAuth.loggingLayer(SystemAuth.dtos.loginSuccess()))
+                else:
+                    return JsonResponse(SystemAuth.loggingLayer(SystemAuth.dtos.invalidCredentials(),LogLevel.ERROR))
+            else:
+                return JsonResponse(SystemAuth.loggingLayer(SystemAuth.dtos.loginSuccess()))
+        except FieldsMissingException as e:
+            return JsonResponse(SystemAuth.loggingLayer(SystemAuth.dtos.loginFailed(e.reason),LogLevel.ERROR))
+
+    @staticmethod
+    def getLoginCredentials(req: HttpRequest) -> ():
+        try:
+            return (req.POST['username'], req.POST['password'])
+        except MultiValueDictKeyError:
+            raise FieldsMissingException
+
+
+    @staticmethod
+    def auth_signUp(req:HttpRequest):
+        try:
+            credentials=SystemAuth.getSignUpCredentials(req)
+            user=User.objects.create_user(*credentials[0:3])
+            user.first_name=credentials[3]
+            user.last_name=credentials[4]
+            user.save()
+            Doctor.fromUser(user).save()
+            return JsonResponse(SystemAuth.loggingLayer(SystemAuth.dtos.signupSuccess()))
+        except FieldsMissingException as e:
+            return JsonResponse(SystemAuth.loggingLayer(SystemAuth.dtos.signUpFailed(e.reason),LogLevel.ERROR))
+        except IntegrityError as e:
+            return JsonResponse(SystemAuth.loggingLayer(SystemAuth.dtos.alreadyExists(),LogLevel.ERROR))
+
+
+
+    @staticmethod
+    def getSignUpCredentials(req: HttpRequest) -> ():
+        try:
+            return (req.POST['username'],req.POST['email'], req.POST['password'],req.POST['first_name'],req.POST['last_name'])
+        except MultiValueDictKeyError:
+            raise FieldsMissingException
+
+
+
+
+
