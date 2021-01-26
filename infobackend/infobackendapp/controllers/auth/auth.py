@@ -16,7 +16,7 @@ from ...etc.authenticated_util import authenticated
 class SystemAuth:
     logger=logging.getLogger("Class:SystemAuth")
     loggingLayer=LoggingLayer(logger).log
-    dtos=SystemAuthDTO()
+    dtos=SystemAuthDTO("SystemAuth")
     @staticmethod
     def auth_login(req:HttpRequest):
         try:
@@ -31,7 +31,7 @@ class SystemAuth:
             else:
                 return JsonResponse(SystemAuth.loggingLayer(SystemAuth.dtos.loginSuccess()))
         except FieldsMissingException as e:
-            return JsonResponse(SystemAuth.loggingLayer(SystemAuth.dtos.loginFailed(e.reason),LogLevel.ERROR))
+            return JsonResponse(SystemAuth.loggingLayer(SystemAuth.dtos.fail(e.reason),LogLevel.ERROR))
 
     @staticmethod
     def getLoginCredentials(req: HttpRequest) -> ():
@@ -52,7 +52,7 @@ class SystemAuth:
             Doctor.fromUser(user).save()
             return JsonResponse(SystemAuth.loggingLayer(SystemAuth.dtos.signupSuccess()))
         except FieldsMissingException as e:
-            return JsonResponse(SystemAuth.loggingLayer(SystemAuth.dtos.signUpFailed(e.reason),LogLevel.ERROR))
+            return JsonResponse(SystemAuth.loggingLayer(SystemAuth.dtos.fail(e.reason),LogLevel.ERROR))
         except IntegrityError as e:
             return JsonResponse(SystemAuth.loggingLayer(SystemAuth.dtos.alreadyExists(),LogLevel.ERROR))
 

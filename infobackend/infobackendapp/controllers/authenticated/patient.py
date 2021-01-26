@@ -1,3 +1,5 @@
+
+
 from django.db import IntegrityError
 from django.http import JsonResponse,HttpRequest,HttpResponse
 from django.contrib.auth import authenticate, login
@@ -14,11 +16,16 @@ from ...models import Doctor
 from ...etc.authenticated_util import authenticated
 from ...dto.doctor import DoctorDTO as DoctorDTO
 
-class DoctorController:
-    logger=logging.getLogger("Class:DoctorController")
+class PatientController:
+    logger=logging.getLogger("Class:PatientController")
     loggingLayer=LoggingLayer(logger).log
     dao:DoctorDAO=DoctorDAO()
-    dto:DoctorDTO=DoctorDTO("DoctorController")
+    dto:DoctorDTO=DoctorDTO("PatientController")
+
+    @staticmethod
+    def addPatient(req):
+        return JsonResponse({'all':'ok'})
+    """
     @staticmethod
     def profile(req:HttpRequest):
         if not authenticated(req):
@@ -29,8 +36,7 @@ class DoctorController:
             return JsonResponse(DoctorController.loggingLayer(DoctorController.dto.successProfile(doctor)))
         except UserDoctorAscNotFound as e:
             return JsonResponse(DoctorController.loggingLayer(DoctorController.dto.failWithReason(e.reason),LogLevel.ERROR))
-
-
+    """
 
 
 

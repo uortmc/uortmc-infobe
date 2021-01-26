@@ -4,19 +4,13 @@ from ..models import Doctor
 
 
 class DoctorDTO(AbstractDTO):
-    def __init__(self):
-        super(DoctorDTO, self).__init__("DoctorInfo")
-
-    def failWithReason(self, reason: str):
-        return util.merge(self.fail(),
-                            {"reason": reason})
+    def __init__(self,handlerName:str):
+        super(DoctorDTO, self).__init__(handlerName)
 
     def noActiveSession(self):
-        return self.failWithReason("Authenticated endpoint without active session")
+        return self.fail("Authenticated endpoint without active session")
 
-    def successWithResponce(self,responce:dict):
-        return util.merge(self.success(),
-                    {"responce":responce})
+
     def successProfile(self,doctor:Doctor):
         return self.successWithResponce(
             {
