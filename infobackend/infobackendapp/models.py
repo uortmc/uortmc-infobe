@@ -6,7 +6,7 @@ class Doctor(Model):
     username=CharField('Username',max_length=50)
     first_name=CharField('First name', max_length=30)
     last_name = CharField('Last name', max_length=30)
-    title = CharField('Title', max_length=30,default="Doctors Title not set")
+    title = CharField('Title', max_length=30,default="Not Set")
     enrolled_date = DateTimeField('Enrolled date', default=now)
     last_seen = DateTimeField('Last seen', default=now)
     online_status=BooleanField('Online status', default=True)
@@ -25,9 +25,11 @@ class Doctor(Model):
         return Doctor(id=id,username=user.username,first_name=user.first_name,last_name=user.last_name)
 
 
+
 class Patient(Model):
     first_name=CharField('First name', max_length=30)
     last_name = CharField('Last name', max_length=30)
+    nino=CharField('National Insurance Number',max_length=9,default="Not Set")
     enrolled_date = DateTimeField('Enrolled date', default=now)
     comments=TextField('Comments',max_length=200)
     ascDoctor=ForeignKey(Doctor,on_delete=CASCADE)
