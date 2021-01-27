@@ -10,9 +10,13 @@ class PatientDTO(AuthenticatedDTO,DoctorSerializer,PatientSerializer):
     def __init__(self,handlerName:str):
         super(PatientDTO, self).__init__(handlerName)
 
-    def successAddPatients(self,patients:list)->dict:
+    def successGetPatients(self, patients:list)->dict:
         return self.successWithResponce(
             [PatientSerializer.toDict(x) for x in patients]
+        )
+    def successAddPatient(self, patient:Patient)->dict:
+        return self.successWithResponce(
+            PatientSerializer.toDict(patient)
         )
 
 

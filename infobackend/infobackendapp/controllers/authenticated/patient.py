@@ -12,10 +12,11 @@ from ...dto.auth import SystemAuthDTO
 import logging
 
 from ...dto.patient import PatientDTO
+from ...exceptions.base import FieldsMissingException
 from ...exceptions.doctordao import UserDoctorAscNotFound
 from ...logging.levels import LogLevel
 from ...logging.logging import LoggingLayer
-from ...models import Doctor
+from ...models import Doctor, Patient
 from ...etc.authenticated_util import authenticated
 from ...dto.doctor import DoctorDTO as DoctorDTO
 
@@ -32,9 +33,34 @@ class PatientController:
         try:
             doctor=PatientController.doctorDao.userToDoctor(req.user)
             patients=PatientController.dao.getPatients(doctor)
-            return JsonResponse(PatientController.dto.successAddPatients(patients))
+            return JsonResponse(PatientController.loggingLayer(PatientController.dto.successGetPatients(patients)))
         except UserDoctorAscNotFound as e:
             return JsonResponse(PatientController.loggingLayer(PatientController.dto.fail(e.reason),LogLevel.ERROR))
+
+    @staticmethod
+    def addPatient(req: HttpRequest):
+        if not authenticated(req):
+            return JsonResponse(PatientController.loggingLayer(PatientController.dto.noActiveSession(), LogLevel.ERROR))
+        try:
+            doctor=PatientController.doctorDao.userToDoctor(req.user)
+            first_name,last_name,nino=PatientController.__getAddPatientRequestFields(req)
+            patient=PatientController.__constructPatient(first_name,last_name,nino,doctor)
+            return JsonResponse(PatientController.loggingLayer(PatientController.dto.successAddPatient(patient)))
+        except UserDoctorAscNotFound as e:
+            return JsonResponse(PatientController.loggingLayer(PatientController.dto.fail(e.reason),LogLevel.ERROR))
+
+    @staticmethod
+    def __getAddPatientRequestFields(req: HttpRequest) -> ():
+        try:
+            return (req.POST['first_name'], req.POST['last_name'],req.POST['nino'])
+        except MultiValueDictKeyError:
+            raise FieldsMissingException
+    @staticmethod
+    def __constructPatient(first_name:str,last_name:str,nino:str,doctor:Doctor)->Patient:
+        new=Patient(first_name=first_name,last_name=last_name,nino=nino,ascDoctor=doctor)
+        new.save()
+        return new
+
 
 
 

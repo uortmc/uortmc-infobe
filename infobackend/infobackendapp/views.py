@@ -11,5 +11,7 @@ def auth_signup(req):
 
 def authenticated_profile(req):
     return DoctorController.profile(req)
-def authenticated_addPatient(req):
+def authenticated_getPatient(req):
     return PatientController.getPatient(req)
+def authenticated_addPatient(req):
+    return PatientController.addPatient(req)
