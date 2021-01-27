@@ -7,8 +7,11 @@ from django.utils.datastructures import MultiValueDictKeyError
 from django.contrib.auth.models import User
 
 from ...dao.doctor import DoctorDAO
+from ...dao.patient import PatientDAO
 from ...dto.auth import SystemAuthDTO
 import logging
+
+from ...dto.patient import PatientDTO
 from ...exceptions.doctordao import UserDoctorAscNotFound
 from ...logging.levels import LogLevel
 from ...logging.logging import LoggingLayer
@@ -19,11 +22,23 @@ from ...dto.doctor import DoctorDTO as DoctorDTO
 class PatientController:
     logger=logging.getLogger("Class:PatientController")
     loggingLayer=LoggingLayer(logger).log
-    dao:DoctorDAO=DoctorDAO()
-    dto:DoctorDTO=DoctorDTO("PatientController")
-
+    dao:PatientDAO=PatientDAO()
+    dto:PatientDTO=PatientDTO("PatientController")
+    doctorDao:DoctorDAO=DoctorDAO()
     @staticmethod
-    def addPatient(req):
+    def getPatient(req:HttpRequest):
+        #Is Logged in?
+        if not authenticated(req):
+            return JsonResponse(PatientController.loggingLayer(PatientController.dto.noActiveSession(), LogLevel.ERROR))
+        #Is a doctor or an another user?
+        try:
+            doctor=PatientController.doctorDao.userToDoctor(req.user)
+            patients=PatientController.dao.getPatients(doctor)
+            PatientController.logger.error(patients)
+            return JsonResponse(PatientController.dto.successAddPatients(patients))
+        except UserDoctorAscNotFound as e:
+            return JsonResponse(PatientController.loggingLayer(PatientController.dto.fail(e.reason),LogLevel.ERROR))
+
         return JsonResponse({'all':'ok'})
     """
     @staticmethod

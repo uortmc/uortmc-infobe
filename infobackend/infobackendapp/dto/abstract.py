@@ -16,6 +16,6 @@ class AbstractDTO:
     def success(self):
         return self.status(True)
 
-    def successWithResponce(self,responce:dict):
+    def successWithResponce(self,responce):
         return util.merge(self.success(),
                     {"responce":responce})
