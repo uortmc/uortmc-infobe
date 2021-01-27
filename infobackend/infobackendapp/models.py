@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from django.utils.timezone import now
 
 class Doctor(Model):
-    username=CharField('Username',max_length=50)
+    username=CharField('Username',max_length=50,unique=True)
     first_name=CharField('First name', max_length=30)
     last_name = CharField('Last name', max_length=30)
     title = CharField('Title', max_length=30,default="Not Set")
@@ -29,7 +29,7 @@ class Doctor(Model):
 class Patient(Model):
     first_name=CharField('First name', max_length=30)
     last_name = CharField('Last name', max_length=30)
-    nino=CharField('National Insurance Number',max_length=9,default="Not Set")
+    nino=CharField('National Insurance Number',max_length=9,unique=True)
     enrolled_date = DateTimeField('Enrolled date', default=now)
     comments=TextField('Comments',max_length=200,default="Not Set")
     ascDoctor=ForeignKey(Doctor,on_delete=CASCADE)

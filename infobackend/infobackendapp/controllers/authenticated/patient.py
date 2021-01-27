@@ -27,31 +27,14 @@ class PatientController:
     doctorDao:DoctorDAO=DoctorDAO()
     @staticmethod
     def getPatient(req:HttpRequest):
-        #Is Logged in?
         if not authenticated(req):
             return JsonResponse(PatientController.loggingLayer(PatientController.dto.noActiveSession(), LogLevel.ERROR))
-        #Is a doctor or an another user?
         try:
             doctor=PatientController.doctorDao.userToDoctor(req.user)
             patients=PatientController.dao.getPatients(doctor)
-            PatientController.logger.error(patients)
             return JsonResponse(PatientController.dto.successAddPatients(patients))
         except UserDoctorAscNotFound as e:
             return JsonResponse(PatientController.loggingLayer(PatientController.dto.fail(e.reason),LogLevel.ERROR))
-
-        return JsonResponse({'all':'ok'})
-    """
-    @staticmethod
-    def profile(req:HttpRequest):
-        if not authenticated(req):
-            return JsonResponse(DoctorController.loggingLayer(DoctorController.dto.noActiveSession(),LogLevel.ERROR))
-        user=req.user
-        try:
-            doctor:Doctor=DoctorController.dao.userToDoctor(user)
-            return JsonResponse(DoctorController.loggingLayer(DoctorController.dto.successProfile(doctor)))
-        except UserDoctorAscNotFound as e:
-            return JsonResponse(DoctorController.loggingLayer(DoctorController.dto.failWithReason(e.reason),LogLevel.ERROR))
-    """
 
 
 
