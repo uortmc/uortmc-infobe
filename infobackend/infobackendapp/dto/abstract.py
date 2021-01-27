@@ -1,15 +1,21 @@
 from ..etc.dict_util import DictUtils as util
 class AbstractDTO:
-    def __init__(self,action):
-        self.action=action
+    def __init__(self,handlerName:str):
+        self.handlerName=handlerName
 
     def status(self,status: bool) -> dict:
         return {
             "complete": status,
-            "action":self.action
+            "handler":self.handlerName
         }
-    def fail(self):
-        return self.status(False)
+    def fail(self,reason:str):
+        return util.merge(
+                self.status(False),
+                {'reason':reason})
 
     def success(self):
         return self.status(True)
+
+    def successWithResponce(self,responce):
+        return util.merge(self.success(),
+                    {"responce":responce})

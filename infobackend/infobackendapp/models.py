@@ -31,7 +31,7 @@ class Patient(Model):
     last_name = CharField('Last name', max_length=30)
     nino=CharField('National Insurance Number',max_length=9,default="Not Set")
     enrolled_date = DateTimeField('Enrolled date', default=now)
-    comments=TextField('Comments',max_length=200)
+    comments=TextField('Comments',max_length=200,default="Not Set")
     ascDoctor=ForeignKey(Doctor,on_delete=CASCADE)
 
     def __str__(self):

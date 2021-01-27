@@ -18,7 +18,7 @@ class DoctorController:
     logger=logging.getLogger("Class:DoctorController")
     loggingLayer=LoggingLayer(logger).log
     dao:DoctorDAO=DoctorDAO()
-    dto:DoctorDTO=DoctorDTO()
+    dto:DoctorDTO=DoctorDTO("DoctorController")
     @staticmethod
     def profile(req:HttpRequest):
         if not authenticated(req):
@@ -28,7 +28,7 @@ class DoctorController:
             doctor:Doctor=DoctorController.dao.userToDoctor(user)
             return JsonResponse(DoctorController.loggingLayer(DoctorController.dto.successProfile(doctor)))
         except UserDoctorAscNotFound as e:
-            return JsonResponse(DoctorController.loggingLayer(DoctorController.dto.failWithReason(e.reason),LogLevel.ERROR))
+            return JsonResponse(DoctorController.loggingLayer(DoctorController.dto.fail(e.reason),LogLevel.ERROR))
 
 
 
