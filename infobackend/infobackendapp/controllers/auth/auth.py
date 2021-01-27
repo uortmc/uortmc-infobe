@@ -7,7 +7,7 @@ from django.contrib.auth.models import User
 from ...dto.auth import SystemAuthDTO
 import logging
 
-from ...exceptions.auth import FieldsMissingException
+from ...exceptions.base import FieldsMissingException
 from ...logging.levels import LogLevel
 from ...logging.logging import LoggingLayer
 from ...models import Doctor
@@ -20,7 +20,7 @@ class SystemAuth:
     @staticmethod
     def auth_login(req:HttpRequest):
         try:
-            username,password=SystemAuth.getLoginCredentials(req)
+            username,password=SystemAuth.__getLoginCredentials(req)
             user = authenticate(req, username=username, password=password)
             if not authenticated(req):
                 if (user is not None):
@@ -34,7 +34,7 @@ class SystemAuth:
             return JsonResponse(SystemAuth.loggingLayer(SystemAuth.dtos.fail(e.reason),LogLevel.ERROR))
 
     @staticmethod
-    def getLoginCredentials(req: HttpRequest) -> ():
+    def __getLoginCredentials(req: HttpRequest) -> ():
         try:
             return (req.POST['username'], req.POST['password'])
         except MultiValueDictKeyError:
@@ -44,7 +44,7 @@ class SystemAuth:
     @staticmethod
     def auth_signUp(req:HttpRequest):
         try:
-            credentials=SystemAuth.getSignUpCredentials(req)
+            credentials=SystemAuth.__getSignUpCredentials(req)
             user=User.objects.create_user(*credentials[0:3])
             user.first_name=credentials[3]
             user.last_name=credentials[4]
@@ -59,7 +59,7 @@ class SystemAuth:
 
 
     @staticmethod
-    def getSignUpCredentials(req: HttpRequest) -> ():
+    def __getSignUpCredentials(req: HttpRequest) -> ():
         try:
             return (req.POST['username'],req.POST['email'], req.POST['password'],req.POST['first_name'],req.POST['last_name'])
         except MultiValueDictKeyError:
