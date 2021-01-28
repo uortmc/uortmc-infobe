@@ -9,6 +9,6 @@ class DoctorDTO(AuthenticatedDTO):
         super(DoctorDTO, self).__init__(handlerName)
 
     def successProfile(self,doctor:Doctor):
-        return self.successWithResponce(self.toDict(doctor))
+        return self.successWithResponce(DoctorSerializer.toDict(doctor))
 
 
