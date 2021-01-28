@@ -46,7 +46,7 @@ class NotificationsController:
         try:
             doctor=NotificationsController.doctorDao.userToDoctor(req.user)
             message=NotificationsController.__getAddNotificationRequestFields(req)
-            notification=NotificationsController.__constructNotification(message,doctor)
+            notification=NotificationsController.dao.constructNotification(message,doctor)
             return JsonResponse(NotificationsController.loggingLayer(NotificationsController.dto.successAddNotification(notification)))
         except (UserDoctorAscNotFound , FieldsMissingException) as e:
             return JsonResponse(NotificationsController.loggingLayer(NotificationsController.dto.fail(e.reason),LogLevel.ERROR))
@@ -57,11 +57,7 @@ class NotificationsController:
             return (req.POST['message'])
         except MultiValueDictKeyError:
             raise FieldsMissingException
-    @staticmethod
-    def __constructNotification(message:str,doctor:Doctor)->Notification:
-        new=Notification(message=message,ascDoctor=doctor)
-        new.save()
-        return new
+
 
 
 

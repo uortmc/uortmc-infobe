@@ -4,10 +4,13 @@ from django.contrib.auth import authenticate, login
 from django.utils.datastructures import MultiValueDictKeyError
 
 from django.contrib.auth.models import User
+
+from ...dao.doctor import DoctorDAO
 from ...dto.auth import SystemAuthDTO
 import logging
 
 from ...exceptions.base import FieldsMissingException
+from ...exceptions.doctordao import UserAlreadyExists
 from ...logging.levels import LogLevel
 from ...logging.logging import LoggingLayer
 from ...models import Doctor
@@ -16,7 +19,8 @@ from ...etc.authenticated_util import authenticated
 class SystemAuth:
     logger=logging.getLogger("Class:SystemAuth")
     loggingLayer=LoggingLayer(logger).log
-    dtos=SystemAuthDTO("SystemAuth")
+    dto=SystemAuthDTO("SystemAuth")
+    doctorDao=DoctorDAO()
     @staticmethod
     def auth_login(req:HttpRequest):
         try:
@@ -25,13 +29,13 @@ class SystemAuth:
             if not authenticated(req):
                 if (user is not None):
                     login(user=user, request=req)
-                    return JsonResponse(SystemAuth.loggingLayer(SystemAuth.dtos.loginSuccess()))
+                    return JsonResponse(SystemAuth.loggingLayer(SystemAuth.dto.loginSuccess()))
                 else:
-                    return JsonResponse(SystemAuth.loggingLayer(SystemAuth.dtos.invalidCredentials(),LogLevel.ERROR))
+                    return JsonResponse(SystemAuth.loggingLayer(SystemAuth.dto.invalidCredentials(),LogLevel.ERROR))
             else:
-                return JsonResponse(SystemAuth.loggingLayer(SystemAuth.dtos.loginSuccess()))
+                return JsonResponse(SystemAuth.loggingLayer(SystemAuth.dto.loginSuccess()))
         except FieldsMissingException as e:
-            return JsonResponse(SystemAuth.loggingLayer(SystemAuth.dtos.fail(e.reason),LogLevel.ERROR))
+            return JsonResponse(SystemAuth.loggingLayer(SystemAuth.dto.fail(e.reason),LogLevel.ERROR))
 
     @staticmethod
     def __getLoginCredentials(req: HttpRequest) -> ():
@@ -45,16 +49,10 @@ class SystemAuth:
     def auth_signUp(req:HttpRequest):
         try:
             credentials=SystemAuth.__getSignUpCredentials(req)
-            user=User.objects.create_user(*credentials[0:3])
-            user.first_name=credentials[3]
-            user.last_name=credentials[4]
-            user.save()
-            Doctor.fromUser(user).save()
-            return JsonResponse(SystemAuth.loggingLayer(SystemAuth.dtos.signupSuccess()))
-        except FieldsMissingException as e:
-            return JsonResponse(SystemAuth.loggingLayer(SystemAuth.dtos.fail(e.reason),LogLevel.ERROR))
-        except IntegrityError as e:
-            return JsonResponse(SystemAuth.loggingLayer(SystemAuth.dtos.alreadyExists(),LogLevel.ERROR))
+            doctor=SystemAuth.doctorDao.constructDoctor(*credentials)
+            return JsonResponse(SystemAuth.loggingLayer(SystemAuth.dto.signUpSuccess(doctor)))
+        except (FieldsMissingException,UserAlreadyExists )as e:
+            return JsonResponse(SystemAuth.loggingLayer(SystemAuth.dto.fail(e.reason),LogLevel.ERROR))
 
 
 

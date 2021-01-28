@@ -5,3 +5,6 @@ class UserDoctorAscNotFound(InfobeException):
     def __init__(self):
         super(UserDoctorAscNotFound, self).__init__("Doctor-User association not found, this is probably because you "
                                                     "own a session of a superuser(User that is not Doctor, etc root)")
+class UserAlreadyExists(InfobeException):
+    def __init__(self):
+        super(UserAlreadyExists, self).__init__("User already exists")
