@@ -7,10 +7,12 @@ from django.utils.datastructures import MultiValueDictKeyError
 from django.contrib.auth.models import User
 
 from ...dao.doctor import DoctorDAO
+from ...dao.notification import NotificationDAO
 from ...dao.patient import PatientDAO
 from ...dto.auth import SystemAuthDTO
 import logging
 
+from ...dto.notification import NotificationDTO
 from ...dto.patient import PatientDTO
 from ...exceptions.base import FieldsMissingException
 from ...exceptions.doctordao import UserDoctorAscNotFound
@@ -23,12 +25,19 @@ from ...dto.doctor import DoctorDTO as DoctorDTO
 class NotificationsController:
     logger=logging.getLogger("Class:NotificationsController")
     loggingLayer=LoggingLayer(logger).log
-    dao:PatientDAO=PatientDAO()
-    dto:PatientDTO=PatientDTO("NotificationsController")
+    dao:NotificationDAO=NotificationDAO()
+    dto:NotificationDTO=NotificationDTO("NotificationsController")
     doctorDao:DoctorDAO=DoctorDAO()
     @staticmethod
     def getNotifications(req:HttpRequest):
-        return JsonResponse({'all':'ok'})
+        if not authenticated(req):
+            return JsonResponse(NotificationsController.loggingLayer(NotificationsController.dto.noActiveSession(), LogLevel.ERROR))
+        try:
+            doctor=NotificationsController.doctorDao.userToDoctor(req.user)
+            notifications=NotificationsController.dao.getNotifications(doctor)
+            return JsonResponse(NotificationsController.loggingLayer(NotificationsController.dto.successGetNotifications(notifications)))
+        except UserDoctorAscNotFound as e:
+            return JsonResponse(NotificationsController.loggingLayer(NotificationsController.dto.fail(e.reason),LogLevel.ERROR))
 
     @staticmethod
     def addNotification(req: HttpRequest):

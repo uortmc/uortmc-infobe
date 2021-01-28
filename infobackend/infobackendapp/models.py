@@ -29,6 +29,8 @@ class Notification(Model):
     ascDoctor=ForeignKey(Doctor,on_delete=CASCADE)
     created=DateTimeField('Creation Date',default=now)
 
+    def __str__(self):
+        return "| Doctor :  "+str(self.ascDoctor)+"  | Message :  "+str(self.message)
 
 class Patient(Model):
     first_name=CharField('First name', max_length=30)

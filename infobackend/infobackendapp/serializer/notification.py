@@ -2,7 +2,7 @@ from .doctor import DoctorSerializer
 from ..models import Notification
 
 
-class NotificatioSerializer():
+class NotificationSerializer():
     @staticmethod
     def toDict(notification: Notification) -> dict:
         return {
