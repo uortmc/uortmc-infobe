@@ -14,6 +14,7 @@ import logging
 from ...dto.patient import PatientDTO
 from ...exceptions.base import FieldsMissingException
 from ...exceptions.doctordao import UserDoctorAscNotFound
+from ...exceptions.patient import NinoUniquenessViolation
 from ...logging.levels import LogLevel
 from ...logging.logging import LoggingLayer
 from ...models import Doctor, Patient
@@ -46,8 +47,9 @@ class PatientController:
             first_name,last_name,nino=PatientController.__getAddPatientRequestFields(req)
             patient=PatientController.__constructPatient(first_name,last_name,nino,doctor)
             return JsonResponse(PatientController.loggingLayer(PatientController.dto.successAddPatient(patient)))
-        except UserDoctorAscNotFound as e:
+        except (UserDoctorAscNotFound , FieldsMissingException,NinoUniquenessViolation) as e:
             return JsonResponse(PatientController.loggingLayer(PatientController.dto.fail(e.reason),LogLevel.ERROR))
+
 
     @staticmethod
     def __getAddPatientRequestFields(req: HttpRequest) -> ():
@@ -57,9 +59,12 @@ class PatientController:
             raise FieldsMissingException
     @staticmethod
     def __constructPatient(first_name:str,last_name:str,nino:str,doctor:Doctor)->Patient:
-        new=Patient(first_name=first_name,last_name=last_name,nino=nino,ascDoctor=doctor)
-        new.save()
-        return new
+        try:
+            new=Patient(first_name=first_name,last_name=last_name,nino=nino,ascDoctor=doctor)
+            new.save()
+            return new
+        except IntegrityError as e:
+            raise NinoUniquenessViolation
 
 
 

@@ -6,7 +6,7 @@ from ..serializer.doctor import DoctorSerializer
 from ..serializer.patient import PatientSerializer
 
 
-class PatientDTO(AuthenticatedDTO,DoctorSerializer,PatientSerializer):
+class PatientDTO(AuthenticatedDTO):
     def __init__(self,handlerName:str):
         super(PatientDTO, self).__init__(handlerName)
 

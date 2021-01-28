@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from .controllers.auth.auth import SystemAuth
 from .controllers.authenticated.doctor import DoctorController
+from .controllers.authenticated.notification import NotificationsController
 from .controllers.authenticated.patient import PatientController
 
 
@@ -15,3 +16,7 @@ def authenticated_getPatient(req):
     return PatientController.getPatient(req)
 def authenticated_addPatient(req):
     return PatientController.addPatient(req)
+def authenticated_getNotifications(req):
+    return NotificationsController.getNotifications(req)
+def authenticated_addNotification(req):
+    return NotificationsController.addNotification(req)

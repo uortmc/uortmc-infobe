@@ -24,7 +24,13 @@ class Doctor(Model):
             id=0
         return Doctor(id=id,username=user.username,first_name=user.first_name,last_name=user.last_name)
 
+class Notification(Model):
+    message=CharField('Message',max_length=100)
+    ascDoctor=ForeignKey(Doctor,on_delete=CASCADE)
+    created=DateTimeField('Creation Date',default=now)
 
+    def __str__(self):
+        return "| Doctor :  "+str(self.ascDoctor)+"  | Message :  "+str(self.message)
 
 class Patient(Model):
     first_name=CharField('First name', max_length=30)
