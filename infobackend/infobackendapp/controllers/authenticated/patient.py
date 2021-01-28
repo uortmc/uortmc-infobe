@@ -45,7 +45,7 @@ class PatientController:
         try:
             doctor=PatientController.doctorDao.userToDoctor(req.user)
             first_name,last_name,nino=PatientController.__getAddPatientRequestFields(req)
-            patient=PatientController.__constructPatient(first_name,last_name,nino,doctor)
+            patient=PatientController.dao.constructPatient(first_name,last_name,nino,doctor)
             return JsonResponse(PatientController.loggingLayer(PatientController.dto.successAddPatient(patient)))
         except (UserDoctorAscNotFound , FieldsMissingException,NinoUniquenessViolation) as e:
             return JsonResponse(PatientController.loggingLayer(PatientController.dto.fail(e.reason),LogLevel.ERROR))
@@ -57,14 +57,7 @@ class PatientController:
             return (req.POST['first_name'], req.POST['last_name'],req.POST['nino'])
         except MultiValueDictKeyError:
             raise FieldsMissingException
-    @staticmethod
-    def __constructPatient(first_name:str,last_name:str,nino:str,doctor:Doctor)->Patient:
-        try:
-            new=Patient(first_name=first_name,last_name=last_name,nino=nino,ascDoctor=doctor)
-            new.save()
-            return new
-        except IntegrityError as e:
-            raise NinoUniquenessViolation
+
 
 
 
