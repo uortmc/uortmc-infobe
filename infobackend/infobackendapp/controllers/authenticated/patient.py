@@ -46,8 +46,9 @@ class PatientController:
             first_name,last_name,nino=PatientController.__getAddPatientRequestFields(req)
             patient=PatientController.__constructPatient(first_name,last_name,nino,doctor)
             return JsonResponse(PatientController.loggingLayer(PatientController.dto.successAddPatient(patient)))
-        except UserDoctorAscNotFound as e:
+        except (UserDoctorAscNotFound , FieldsMissingException) as e:
             return JsonResponse(PatientController.loggingLayer(PatientController.dto.fail(e.reason),LogLevel.ERROR))
+
 
     @staticmethod
     def __getAddPatientRequestFields(req: HttpRequest) -> ():

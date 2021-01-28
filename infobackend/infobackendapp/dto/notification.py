@@ -1,7 +1,7 @@
 
 from .authenticatedDto import AuthenticatedDTO
 from ..etc.dict_util import DictUtils as util
-from ..models import Patient,Doctor
+from ..models import Patient, Doctor, Notification
 from ..serializer.doctor import DoctorSerializer
 from ..serializer.notification import NotificationSerializer
 from ..serializer.patient import PatientSerializer
@@ -15,8 +15,8 @@ class NotificationDTO(AuthenticatedDTO):
         return self.successWithResponce(
             [NotificationSerializer.toDict(each) for each in notifications]
         )
-    def successAddNotification(self, notifications:Patient)->dict:
-        pass
+    def successAddNotification(self, notification:Notification)->dict:
+        return self.successWithResponce(NotificationSerializer.toDict(notification))
 
 
 

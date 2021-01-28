@@ -18,7 +18,7 @@ from ...exceptions.base import FieldsMissingException
 from ...exceptions.doctordao import UserDoctorAscNotFound
 from ...logging.levels import LogLevel
 from ...logging.logging import LoggingLayer
-from ...models import Doctor, Patient
+from ...models import Doctor, Patient, Notification
 from ...etc.authenticated_util import authenticated
 from ...dto.doctor import DoctorDTO as DoctorDTO
 
@@ -41,7 +41,27 @@ class NotificationsController:
 
     @staticmethod
     def addNotification(req: HttpRequest):
-        return JsonResponse({'all': 'ok'})
+        if not authenticated(req):
+            return JsonResponse(NotificationsController.loggingLayer(NotificationsController.dto.noActiveSession(), LogLevel.ERROR))
+        try:
+            doctor=NotificationsController.doctorDao.userToDoctor(req.user)
+            message=NotificationsController.__getAddNotificationRequestFields(req)
+            notification=NotificationsController.__constructNotification(message,doctor)
+            return JsonResponse(NotificationsController.loggingLayer(NotificationsController.dto.successAddNotification(notification)))
+        except (UserDoctorAscNotFound , FieldsMissingException) as e:
+            return JsonResponse(NotificationsController.loggingLayer(NotificationsController.dto.fail(e.reason),LogLevel.ERROR))
+
+    @staticmethod
+    def __getAddNotificationRequestFields(req: HttpRequest) -> ():
+        try:
+            return (req.POST['message'])
+        except MultiValueDictKeyError:
+            raise FieldsMissingException
+    @staticmethod
+    def __constructNotification(message:str,doctor:Doctor)->Notification:
+        new=Notification(message=message,ascDoctor=doctor)
+        new.save()
+        return new
 
 
 
