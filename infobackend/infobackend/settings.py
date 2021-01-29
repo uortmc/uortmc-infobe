@@ -30,7 +30,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'corsheaders'
+    'corsheaders',
     'infobackendapp.apps.InformationbackendConfig',
     'django.contrib.admin',
     'django.contrib.auth',
