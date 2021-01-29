@@ -1,0 +1,26 @@
+
+
+
+
+Login as superuser
+	addPatient 					user asc not found
+	addPatient no fields		required fields not found
+	addNotification 			user asc not found
+	addNotification no fields	required fields not found
+Login as normal user
+	addPatient 					ok
+	addPatient no fields		required fields not found
+	addPatient 2nd time			found same nino! not handled
+	addNotification 			ok
+	addNotification no fields	required fields not found
+NoLogin
+	addPatient 					no active session
+	addPatient no fields		required fields not found
+	addNotification 			no active session
+	addNotification no fields	required fields not found
+
+SignUp
+	1rst time OK
+	2nd time Already Exists
+	no field   NoFieldException
+
