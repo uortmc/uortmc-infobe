@@ -26,14 +26,14 @@ class SystemAuth:
         try:
             username,password=SystemAuth.__getLoginCredentials(req)
             user = authenticate(req, username=username, password=password)
-            if not authenticated(req):
-                if (user is not None):
-                    login(user=user, request=req)
-                    return JsonResponse(SystemAuth.loggingLayer(SystemAuth.dto.loginSuccess()))
-                else:
-                    return JsonResponse(SystemAuth.loggingLayer(SystemAuth.dto.invalidCredentials(),LogLevel.ERROR))
-            else:
+            #if not authenticated(req):
+            if (user is not None):
+                login(user=user, request=req)
                 return JsonResponse(SystemAuth.loggingLayer(SystemAuth.dto.loginSuccess()))
+            else:
+                return JsonResponse(SystemAuth.loggingLayer(SystemAuth.dto.invalidCredentials(), LogLevel.ERROR))
+            #else:
+             #   return JsonResponse(SystemAuth.loggingLayer(SystemAuth.dto.loginSuccess()))
         except FieldsMissingException as e:
             return JsonResponse(SystemAuth.loggingLayer(SystemAuth.dto.fail(e.reason),LogLevel.ERROR))
 
