@@ -14,7 +14,7 @@ import logging
 from ...dto.patient import PatientDTO
 from ...exceptions.base import FieldsMissingException
 from ...exceptions.doctordao import UserDoctorAscNotFound
-from ...exceptions.patient import NinoUniquenessViolation
+from ...exceptions.patient import NinoUniquenessViolation, NinoNotFound
 from ...logging.levels import LogLevel
 from ...logging.logging import LoggingLayer
 from ...models import Doctor, Patient
@@ -50,11 +50,30 @@ class PatientController:
         except (UserDoctorAscNotFound , FieldsMissingException,NinoUniquenessViolation) as e:
             return JsonResponse(PatientController.loggingLayer(PatientController.dto.fail(e.reason),LogLevel.ERROR))
 
+    @staticmethod
+    def setPatientsComment(req: HttpRequest):
+        if not authenticated(req):
+            return JsonResponse(PatientController.loggingLayer(PatientController.dto.noActiveSession(), LogLevel.ERROR))
+        try:
+            doctor = PatientController.doctorDao.userToDoctor(req.user)
+            nino,comment = PatientController.__getSetCommentRequestFields(req)
+            patient = PatientController.dao.setPatientCommentFromNino(doctor,nino,comment)
+            return JsonResponse(PatientController.loggingLayer(PatientController.dto.success()))
+        except (UserDoctorAscNotFound, FieldsMissingException, NinoUniquenessViolation,NinoNotFound) as e:
+            return JsonResponse(PatientController.loggingLayer(PatientController.dto.fail(e.reason), LogLevel.ERROR))
+
 
     @staticmethod
     def __getAddPatientRequestFields(req: HttpRequest) -> ():
         try:
             return (req.POST['first_name'], req.POST['last_name'],req.POST['nino'])
+        except MultiValueDictKeyError:
+            raise FieldsMissingException
+
+    @staticmethod
+    def __getSetCommentRequestFields(req: HttpRequest) -> ():
+        try:
+            return (req.POST['nino'],req.POST['comment'])
         except MultiValueDictKeyError:
             raise FieldsMissingException
 

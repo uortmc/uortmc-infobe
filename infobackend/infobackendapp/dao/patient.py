@@ -1,6 +1,6 @@
 from django.db import IntegrityError
 
-from ..exceptions.patient import NinoUniquenessViolation
+from ..exceptions.patient import NinoUniquenessViolation, NinoNotFound
 from ..models import Patient, Doctor
 
 
@@ -15,5 +15,18 @@ class PatientDAO:
             return new
         except IntegrityError as e:
             raise NinoUniquenessViolation
+
+    def getPatientFromNino(self,doctor:Doctor,nino:str)->Patient:
+        retval=self.getPatients(doctor).filter(nino=nino)
+        if(len(retval)==0):
+            raise NinoNotFound
+        return retval[0] #Get the first, nino is unique, so every nino should have only 1 entry
+
+    def setPatientCommentFromNino(self,doctor:Doctor,nino:str,comment:str)->Patient:
+        instance=self.getPatientFromNino(doctor,nino)
+        instance.comments=comment
+        instance.save()
+        return instance
+
 
 
