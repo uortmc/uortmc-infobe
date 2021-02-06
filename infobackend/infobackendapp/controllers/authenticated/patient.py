@@ -14,7 +14,7 @@ import logging
 from ...dto.patient import PatientDTO
 from ...exceptions.base import FieldsMissingException
 from ...exceptions.doctordao import UserDoctorAscNotFound
-from ...exceptions.patient import NinoUniquenessViolation
+from ...exceptions.patient import NinoUniquenessViolation, NinoNotFound
 from ...logging.levels import LogLevel
 from ...logging.logging import LoggingLayer
 from ...models import Doctor, Patient
@@ -60,7 +60,7 @@ class PatientController:
             patient = PatientController.dao.setPatientCommentFromNino(doctor,nino,comment)
             PatientController.logger.error(str(patient))
             return JsonResponse(PatientController.loggingLayer(PatientController.dto.success()))
-        except (UserDoctorAscNotFound, FieldsMissingException, NinoUniquenessViolation) as e:
+        except (UserDoctorAscNotFound, FieldsMissingException, NinoUniquenessViolation,NinoNotFound) as e:
             return JsonResponse(PatientController.loggingLayer(PatientController.dto.fail(e.reason), LogLevel.ERROR))
 
 

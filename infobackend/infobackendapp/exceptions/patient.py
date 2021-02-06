@@ -6,4 +6,4 @@ class NinoUniquenessViolation(InfobeException):
         super(NinoUniquenessViolation,self).__init__("Given NINO already exists")
 class NinoNotFound(InfobeException):
     def __init__(self):
-        super(NinoNotFound,self).__init__("Given NINO Not found or not permitted")
+        super(NinoNotFound,self).__init__("Given NINO not found or not permitted")
