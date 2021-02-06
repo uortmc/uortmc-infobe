@@ -16,6 +16,8 @@ def authenticated_getPatient(req):
     return PatientController.getPatient(req)
 def authenticated_addPatient(req):
     return PatientController.addPatient(req)
+def authenticated_setPatientComment(req):
+    return PatientController.setPatientsComment(req)
 def authenticated_getNotifications(req):
     return NotificationsController.getNotifications(req)
 def authenticated_addNotification(req):
