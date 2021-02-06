@@ -58,7 +58,6 @@ class PatientController:
             doctor = PatientController.doctorDao.userToDoctor(req.user)
             nino,comment = PatientController.__getSetCommentRequestFields(req)
             patient = PatientController.dao.setPatientCommentFromNino(doctor,nino,comment)
-            PatientController.logger.error(str(patient))
             return JsonResponse(PatientController.loggingLayer(PatientController.dto.success()))
         except (UserDoctorAscNotFound, FieldsMissingException, NinoUniquenessViolation,NinoNotFound) as e:
             return JsonResponse(PatientController.loggingLayer(PatientController.dto.fail(e.reason), LogLevel.ERROR))
