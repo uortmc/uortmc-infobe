@@ -1,7 +1,7 @@
 from django.db.models import *
 from django.contrib.auth.models import User
 from django.utils.timezone import now
-
+import uuid
 class Doctor(Model):
     username=CharField('Username',max_length=50,unique=True)
     first_name=CharField('First name', max_length=30)
@@ -43,9 +43,24 @@ class Patient(Model):
     def __str__(self):
         return "Patient "+self.first_name+" "+self.last_name
 
+
 class Scan(Model):
-    token=TextField('Scan TE Token',max_length=300)
+
+
+    ALGORITHMS = [
+        ('NS', 'NOT SET'),
+        ('SVC', 'Simple Support Vector Machine')
+    ]
+    STATUS = [
+        ('SUBMITTED', 'Submitted'),
+        ('COMPLETED', 'Completed'),
+        ('CANCELLED', 'Cancelled')
+    ]
     ascPatient=ForeignKey(Patient,on_delete=CASCADE)
+    token = UUIDField('Scan Token',unique=True, default=uuid.uuid4, editable=False)
+    status=CharField('Scan Status',max_length=10,choices=STATUS,default=STATUS[0][0])
+    algorithm=CharField('Algorithm Used',max_length=10,choices=ALGORITHMS,default=ALGORITHMS[0][0])
+    comment = TextField('Doctors Comments',default="Not Set", max_length=300)
 
     def __str__(self):
         return "Scan "+self.token
