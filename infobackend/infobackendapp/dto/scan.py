@@ -2,7 +2,7 @@
 
 from .authenticatedDto import AuthenticatedDTO
 from ..etc.dict_util import DictUtils as util
-from ..models import Patient,Doctor
+from ..models import Patient,Doctor,Scan
 from ..serializer.doctor import DoctorSerializer
 from ..serializer.patient import PatientSerializer
 from ..serializer.scan import ScanSerializer
@@ -15,6 +15,10 @@ class ScanDTO(AuthenticatedDTO):
     def successGetScans(self, scans:list)->dict:
         return self.successWithResponce(
             [ScanSerializer.toDict(x) for x in scans]
+        )
+    def successAddScan(self,scan:Scan)->dict:
+        return self.successWithResponce(
+            ScanSerializer.toDict(scan)
         )
 
 

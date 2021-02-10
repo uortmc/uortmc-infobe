@@ -14,9 +14,8 @@ import logging
 
 from ...dto.patient import PatientDTO
 from ...dto.scan import ScanDTO
-from ...exceptions.base import FieldsMissingException
+from ...exceptions.base import FieldsMissingException, NinoNotFound, NinoUniquenessViolation
 from ...exceptions.doctordao import UserDoctorAscNotFound
-from ...exceptions.patient import NinoUniquenessViolation, NinoNotFound
 from ...logging.levels import LogLevel
 from ...logging.logging import LoggingLayer
 from ...models import Doctor, Patient
@@ -29,6 +28,7 @@ class ScanController:
     dao:ScanDAO=ScanDAO()
     dto:ScanDTO=ScanDTO("ScanController")
     doctorDao:DoctorDAO=DoctorDAO()
+    patientDao:PatientDAO=PatientDAO()
 
     @staticmethod
     def getScans(req:HttpRequest):
@@ -39,14 +39,28 @@ class ScanController:
             scans=ScanController.dao.getScansFromDoctor(ascDoctor)
             return JsonResponse(ScanController.loggingLayer(ScanController.dto.successGetScans(scans)))
         except UserDoctorAscNotFound as e:
-            return JsonResponse({'all':'bad','reason':str(e)})
+            return JsonResponse(ScanController.loggingLayer(ScanController.dto.fail(e.reason),LogLevel.ERROR))
 
 
     @staticmethod
     def addScan(req: HttpRequest):
         if not authenticated(req):
             return JsonResponse(ScanController.loggingLayer(ScanController.dto.noActiveSession(), LogLevel.ERROR))
-        return JsonResponse({'all':'ok'})
+        try:
+            nino = ScanController.__getAddPatientRequestFields(req)
+            ascDoctor=ScanController.doctorDao.userToDoctor(req.user)
+            patient=ScanController.patientDao.getPatientFromNino(ascDoctor,nino)
+            scan=ScanController.dao.addScan(patient)
+            return JsonResponse(ScanController.loggingLayer(ScanController.dto.successAddScan(scan)))
+        except (UserDoctorAscNotFound, FieldsMissingException, NinoUniquenessViolation,NinoNotFound) as e :
+            return JsonResponse(ScanController.loggingLayer(ScanController.dto.fail(e.reason),LogLevel.ERROR))
+
+    @staticmethod
+    def __getAddPatientRequestFields(req:HttpRequest)->str:
+        try:
+            return (req.POST['nino'])
+        except MultiValueDictKeyError as e:
+            raise FieldsMissingException
 
 
 
