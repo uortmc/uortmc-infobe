@@ -63,7 +63,7 @@ class Scan(Model):
     comment = TextField('Doctors Comments',default="Not Set", max_length=300)
 
     def __str__(self):
-        return "Scan "+self.token
+        return "Scan "+str(self.token)
 
 
 

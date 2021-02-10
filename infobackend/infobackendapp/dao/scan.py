@@ -1,4 +1,4 @@
-from ..models import Patient, Doctor
+from ..models import Patient, Doctor,Scan
 class ScanDAO:
-    def __init__(self):
-        pass
+    def getScansFromDoctor(self,doctor:Doctor)->list:
+        return Scan.objects.filter(ascPatient__ascDoctor__username__iexact=doctor.username)

@@ -32,11 +32,20 @@ class ScanController:
 
     @staticmethod
     def getScans(req:HttpRequest):
-        return JsonResponse({'all':'ok'})
+        if not authenticated(req):
+            return JsonResponse(ScanController.loggingLayer(ScanController.dto.noActiveSession(), LogLevel.ERROR))
+        try:
+            ascDoctor=ScanController.doctorDao.userToDoctor(req.user)
+            scans=ScanController.dao.getScansFromDoctor(ascDoctor)
+            return JsonResponse(ScanController.loggingLayer(ScanController.dto.successGetScans(scans)))
+        except UserDoctorAscNotFound as e:
+            return JsonResponse({'all':'bad','reason':str(e)})
 
 
     @staticmethod
     def addScan(req: HttpRequest):
+        if not authenticated(req):
+            return JsonResponse(ScanController.loggingLayer(ScanController.dto.noActiveSession(), LogLevel.ERROR))
         return JsonResponse({'all':'ok'})
 
 

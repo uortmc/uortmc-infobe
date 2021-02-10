@@ -24,3 +24,6 @@ SignUp
 	2nd time Already Exists
 	no field   NoFieldException
 
+from infobackendapp.models import Doctor,Patient,Scan
+d=Doctor.objects.all()[0]
+Scan.objects.filter(ascPatient__ascDoctor__username__iexact=d.username)
