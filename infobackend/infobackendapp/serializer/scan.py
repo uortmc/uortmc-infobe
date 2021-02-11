@@ -10,5 +10,6 @@ class ScanSerializer():
             "token":scan.token,
             "status":scan.status,
             "algorithm":scan.algorithm,
+            "created":scan.created,
             "comment":scan.comment
         }
