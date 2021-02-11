@@ -58,12 +58,13 @@ class Scan(Model):
     ]
     ascPatient=ForeignKey(Patient,on_delete=CASCADE)
     token = UUIDField('Scan Token',unique=True, default=uuid.uuid4, editable=False)
+    created=DateTimeField('Created',default=now)
     status=CharField('Scan Status',max_length=10,choices=STATUS,default=STATUS[0][0])
     algorithm=CharField('Algorithm Used',max_length=10,choices=ALGORITHMS,default=ALGORITHMS[0][0])
     comment = TextField('Doctors Comments',default="Not Set", max_length=300)
 
     def __str__(self):
-        return "Scan "+self.token
+        return "Scan "+str(self.token)
 
 
 

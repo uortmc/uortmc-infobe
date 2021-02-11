@@ -12,9 +12,8 @@ from ...dto.auth import SystemAuthDTO
 import logging
 
 from ...dto.patient import PatientDTO
-from ...exceptions.base import FieldsMissingException
+from ...exceptions.base import FieldsMissingException, NinoNotFound, NinoUniquenessViolation
 from ...exceptions.doctordao import UserDoctorAscNotFound
-from ...exceptions.patient import NinoUniquenessViolation, NinoNotFound
 from ...logging.levels import LogLevel
 from ...logging.logging import LoggingLayer
 from ...models import Doctor, Patient

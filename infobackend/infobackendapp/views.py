@@ -3,6 +3,7 @@ from .controllers.auth.auth import SystemAuth
 from .controllers.authenticated.doctor import DoctorController
 from .controllers.authenticated.notification import NotificationsController
 from .controllers.authenticated.patient import PatientController
+from .controllers.authenticated.scan import ScanController
 
 
 def auth_login(req):
@@ -22,3 +23,7 @@ def authenticated_getNotifications(req):
     return NotificationsController.getNotifications(req)
 def authenticated_addNotification(req):
     return NotificationsController.addNotification(req)
+def authenticated_getScans(req):
+    return ScanController.getScans(req)
+def authenticated_addScan(req):
+    return ScanController.addScan(req)

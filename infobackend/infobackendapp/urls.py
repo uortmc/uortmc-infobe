@@ -10,5 +10,7 @@ urlpatterns = [
     path('authenticated/addpatient',views.authenticated_addPatient,name='addpatient'),
     path('authenticated/setcomment',views.authenticated_setPatientComment,name='setpatientcomment'),
     path('authenticated/getnotifications',views.authenticated_getNotifications,name='getnotification'),
-    path('authenticated/addnotification',views.authenticated_addNotification,name='addnotification')
+    path('authenticated/addnotification',views.authenticated_addNotification,name='addnotification'),
+    path('authenticated/getscans',views.authenticated_getScans,name='getscans'),
+    path('authenticated/addscan',views.authenticated_addScan,name='addscan')
 ]

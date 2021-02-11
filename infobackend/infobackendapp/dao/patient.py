@@ -1,6 +1,6 @@
 from django.db import IntegrityError
 
-from ..exceptions.patient import NinoUniquenessViolation, NinoNotFound
+from ..exceptions.base import NinoNotFound, NinoUniquenessViolation
 from ..models import Patient, Doctor
 
 
