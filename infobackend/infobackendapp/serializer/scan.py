@@ -8,8 +8,7 @@ class ScanSerializer():
         return {
             "ascPatient":PatientSerializer.toDict(scan.ascPatient),
             "token":scan.token,
-            "status":scan.status,
-            "algorithm":scan.algorithm,
-            "created":scan.created,
+            "created": scan.created,
+            "status": scan.status,
             "comment":scan.comment
         }
