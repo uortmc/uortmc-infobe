@@ -1,8 +1,9 @@
 from django.db import IntegrityError
 
 from ..exceptions.doctordao import UserDoctorAscNotFound, UserAlreadyExists
-from ..models import Doctor
+from ..models import Doctor,Scan
 from django.contrib.auth.models import User
+
 class DoctorDAO:
 
     def userToDoctor(self,user:User)->Doctor:
@@ -22,6 +23,11 @@ class DoctorDAO:
             return doctor
         except IntegrityError as e:
             raise UserAlreadyExists
+
+    def scanToDoctor(self,scan:Scan)->Doctor:
+        return scan.ascPatient.ascDoctor
+
+
 
 
 

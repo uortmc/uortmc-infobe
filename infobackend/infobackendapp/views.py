@@ -27,3 +27,5 @@ def authenticated_getScans(req):
     return ScanController.getScans(req)
 def authenticated_addScan(req):
     return ScanController.addScan(req)
+def scanComplete(req):
+    return NotificationsController.scanCompleteNotification(req)

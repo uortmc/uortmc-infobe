@@ -45,22 +45,19 @@ class Patient(Model):
 
 
 class Scan(Model):
-
-
-    ALGORITHMS = [
-        ('NS', 'NOT SET'),
-        ('SVC', 'Simple Support Vector Machine')
-    ]
-    STATUS = [
-        ('SUBMITTED', 'Submitted'),
-        ('COMPLETED', 'Completed'),
-        ('CANCELLED', 'Cancelled')
-    ]
+    class Status:
+        SUBMITTED='SUBMITTED'
+        COMPLETED='COMPLETED'
+        CANCELLED='CANCELLED'
+        STATUS = [
+            (SUBMITTED, 'Submitted'),
+            (COMPLETED, 'Completed'),
+            (CANCELLED, 'Cancelled')
+        ]
     ascPatient=ForeignKey(Patient,on_delete=CASCADE)
     token = UUIDField('Scan Token',unique=True, default=uuid.uuid4, editable=False)
     created=DateTimeField('Created',default=now)
-    status=CharField('Scan Status',max_length=10,choices=STATUS,default=STATUS[0][0])
-    algorithm=CharField('Algorithm Used',max_length=10,choices=ALGORITHMS,default=ALGORITHMS[0][0])
+    status=CharField('Scan Status',max_length=10,choices=Status.STATUS,default=Status.SUBMITTED)
     comment = TextField('Doctors Comments',default="Not Set", max_length=300)
 
     def __str__(self):
