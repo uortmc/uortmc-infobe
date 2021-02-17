@@ -5,12 +5,15 @@ from .controllers.authenticated.notification import NotificationsController
 from .controllers.authenticated.patient import PatientController
 from .controllers.authenticated.scan import ScanController
 
-
+#Non-Authenticated
 def auth_login(req):
     return SystemAuth.auth_login(req)
 def auth_signup(req):
     return SystemAuth.auth_signUp(req)
+def scanComplete(req):
+    return NotificationsController.scanCompleteNotification(req)
 
+#Authenticated
 def authenticated_profile(req):
     return DoctorController.profile(req)
 def authenticated_getPatient(req):
@@ -27,5 +30,7 @@ def authenticated_getScans(req):
     return ScanController.getScans(req)
 def authenticated_addScan(req):
     return ScanController.addScan(req)
-def scanComplete(req):
-    return NotificationsController.scanCompleteNotification(req)
+def authenticated_updateScanComment(req):
+    return ScanController.updateScanComment(req)
+
+

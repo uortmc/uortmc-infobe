@@ -13,5 +13,7 @@ urlpatterns = [
     path('authenticated/addnotification',views.authenticated_addNotification,name='addnotification'),
     path('authenticated/getscans',views.authenticated_getScans,name='getscans'),
     path('authenticated/addscan',views.authenticated_addScan,name='addscan'),
-    path('scancomplete',views.scanComplete,name='scancomplete')
+    path('authenticated/updatescancomment',views.authenticated_updateScanComment,name='updatescancomment'),
+    path('scancomplete',views.scanComplete,name='scancomplete'),
+
 ]
