@@ -62,6 +62,19 @@ class ScanController:
         except MultiValueDictKeyError as e:
             raise FieldsMissingException
 
+    @staticmethod
+    def updateScanComment(req:HttpRequest):
+        if not authenticated(req):
+            return JsonResponse(ScanController.loggingLayer(ScanController.dto.noActiveSession(), LogLevel.ERROR))
+        return JsonResponse({'all':'ok'})
+
+    @staticmethod
+    def __getUpdateScanRequestFields(req: HttpRequest) -> ():
+        try:
+            return (req.POST['token'],req.POST['comment'])
+        except MultiValueDictKeyError as e:
+            raise FieldsMissingException
+
 
 
 
