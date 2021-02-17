@@ -16,6 +16,7 @@ from ...dto.patient import PatientDTO
 from ...dto.scan import ScanDTO
 from ...exceptions.base import FieldsMissingException, NinoNotFound, NinoUniquenessViolation
 from ...exceptions.doctordao import UserDoctorAscNotFound
+from ...exceptions.scan import ScanNotFound
 from ...logging.levels import LogLevel
 from ...logging.logging import LoggingLayer
 from ...models import Doctor, Patient
@@ -66,7 +67,15 @@ class ScanController:
     def updateScanComment(req:HttpRequest):
         if not authenticated(req):
             return JsonResponse(ScanController.loggingLayer(ScanController.dto.noActiveSession(), LogLevel.ERROR))
-        return JsonResponse({'all':'ok'})
+        try:
+            token,comment=ScanController.__getUpdateScanRequestFields(req)
+            doctor=ScanController.doctorDao.userToDoctor(req.user)
+            scan=ScanController.dao.getScanFromDoctor(doctor,token)
+            updatedScan=ScanController.dao.updateScanComment(scan,comment)
+            return JsonResponse(ScanController.loggingLayer(ScanController.dto.success()))
+        except (FieldsMissingException,UserDoctorAscNotFound,ScanNotFound) as e:
+            return JsonResponse(ScanController.loggingLayer(ScanController.dto.fail(e.reason), LogLevel.ERROR))
+
 
     @staticmethod
     def __getUpdateScanRequestFields(req: HttpRequest) -> ():
